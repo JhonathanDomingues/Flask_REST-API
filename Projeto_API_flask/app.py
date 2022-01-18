@@ -5,6 +5,7 @@ from resources.hotel import Hoteis, Hotel
 app = Flask(__name__)
 api = Api(app)
 
+#urls
 api.add_resource(Hoteis, '/hoteis')
 api.add_resource(Hotel, '/hoteis/<string:hotel_id>')
 
