@@ -41,7 +41,7 @@ class Hotel(Resource):
 	def get(self, hotel_id):
 		hotel = HotelModel.find_hotel(hotel_id)
 		if hotel:
-			return hotel
+			return hotel.json()
 		return {'message': 'Hotel note found.'}, 404
 	
 	def post(self, hotel_id):
@@ -57,14 +57,14 @@ class Hotel(Resource):
 	def put(self, hotel_id):
 
 		dados =  Hotel.argumentos.parse_args()
-		hotel_objeto = HotelModel(hotel_id,**dados)
-		novo_hotel = hotel_objeto.json()
-		hotel = HotelModel.find_hotel(hotel_id)
-		if hotel:
-			hotel.update(novo_hotel)
-			return novo_hotel, 200
-		hoteis.append(novo_hotel)
-		return novo_hotel, 201
+		hotel_econtrado = HotelModel.find_hotel(hotel_id)
+		if hotel_econtrado:
+			hotel_econtrado.update_hotel(**dados)
+			hotel_econtrado.save_hotel()
+			return hotel_econtrado.json(), 200
+		hotel = HotelModel(hotel_id,**dados)
+		hotel.save_hotel()
+		return hotel.json(), 201
 		
 
 	def delete(self, hotel_id):
