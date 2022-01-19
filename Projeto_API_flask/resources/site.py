@@ -19,6 +19,7 @@ class Site(Resource):
 		site = SiteModel(url)
 		try:
 			site.save_site()
+			return {'message': 'Site created successfully!'}, 200
 		except:
 			return {'message': 'An internal error ocurred trying to create a new site.'},500
 
