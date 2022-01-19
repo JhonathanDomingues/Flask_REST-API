@@ -27,4 +27,17 @@ class HotelModel(banco.Model):
 			'diaria': self.diaria,
 			'cidade': self.cidade
 		}
+	
+	
+	@classmethod
+	def find_hotel(cls, hotel_id):
+		hotel = cls.query.filter_by(hotel_id=hotel_id).first()
+		if hotel:
+			return hotel
+		return None
+	
+	def save_hotel(self):
+		banco.session.add(self)
+		banco.session.commit()
+
 
