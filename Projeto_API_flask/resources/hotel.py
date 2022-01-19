@@ -51,7 +51,10 @@ class Hotel(Resource):
 		return {'message': 'Hotel note found.'}, 404
 	
 	def post(self, hotel_id):
+		if HotelModel.find_hotel(hotel_id):
+			return {'message':f'Hotel id "{hotel_id}" already exists'}
 
+		
 		dados =  Hotel.argumentos.parse_args()
 		hotel_objeto = HotelModel(hotel_id,**dados)
 		novo_hotel = hotel_objeto.json()
