@@ -20,3 +20,19 @@ class User(Resource):
 			return {'message': 'User deleted.'}
 		return {'menssage': 'User not found.'}
 
+class UserRegister(Resource):
+
+	def post(self):
+		atributos = reqparse.RequestParser()
+		atributos.add_argument('login', type=str, required=True, help="The field 'nome' cannot be left blank")
+		atributos.add_argument('senha', type=str, required=True, help="The field 'nome' cannot be left blank")
+		dados = atributos.parse_args()
+
+		if UserModel.find_by_login(dados['login']):
+			return {'message': f"The login {dados['login']} already exists"}
+		
+		user = UserModel(**dados)
+		user.save_user()
+		return {'message': 'User cread successfully!'}, 201
+
+	
