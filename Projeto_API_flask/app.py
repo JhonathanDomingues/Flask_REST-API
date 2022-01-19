@@ -15,15 +15,15 @@ jwt = JWTManager(app)
 
 @app.before_first_request
 def criar_banco():
-    banco.create_all()
+	banco.create_all()
 
 @jwt.token_in_blocklist_loader
-def verifica_blocklist(token):
-    return token['jti'] in BLOCKLIST
+def verifica_blocklist(slef,token):
+	return token['jti'] in BLOCKLIST
 
 @jwt.revoked_token_loader
-def token_de_acesso_invalidado():
-    return jsonify({'message': 'You have been logged out.'}), 401
+def token_de_acesso_invalidado(jwt_header, jwt_payload):
+	return jsonify({'message': 'You have been logged out.'}), 401
 
 #urls
 api.add_resource(Hoteis, '/hoteis')
@@ -34,9 +34,9 @@ api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
 
 if __name__=="__main__":
-    from sql_alchemy import banco
-    banco.init_app(app)
-    app.run(debug=True)
+	from sql_alchemy import banco
+	banco.init_app(app)
+	app.run(debug=True)
 
 
 
