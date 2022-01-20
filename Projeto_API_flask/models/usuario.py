@@ -4,7 +4,7 @@ from requests import post
 
 MAILGUN_DOMAIN = 'sandbox52e73951098b4eebaf0a7a222aecb784.mailgun.org'
 MAILGUN_API_KEY = '44832b9aad4bd85d5eac592b1b622cff-ef80054a-529d16c0'
-FROM_TITLE = 'No-replay - Confirm e-mail'
+FROM_TITLE = 'No-replay'
 FROM_EMAIL = 'no-replay@restapi.com'
 
 
