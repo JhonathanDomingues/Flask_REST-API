@@ -51,7 +51,7 @@ class UserLogin(Resource):
 
 		user = UserModel.find_by_login(dados['login'])
 		if user and safe_str_cmp(user.senha, dados['senha']):
-			if user.ativador:
+			if user.ativado:
 				token_de_acesso = create_access_token(identity=user.user_id)
 				return {'access_token':token_de_acesso}, 200
 			else:
@@ -75,7 +75,7 @@ class UserConfirm(Resource):
 	def get(cls, user_id):
 		user = UserModel.find_user(user_id)
 		if not user:
-			return {'message': "User id '{user_id}' not found."}, 404
+			return {'message': f"User id '{user_id}' not found."}, 404
 		user.ativado = True
 		user.save_user()
-		return {'message': "User id '{user_id}' confirmed successfully."}, 200
+		return {'message': f"User id '{user_id}' confirmed successfully."}, 200
