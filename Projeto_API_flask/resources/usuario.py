@@ -8,7 +8,7 @@ from blocklist import BLOCKLIST
 atributos = reqparse.RequestParser()
 atributos.add_argument('login', type=str, required=True, help="The field 'nome' cannot be left blank")
 atributos.add_argument('senha', type=str, required=True, help="The field 'nome' cannot be left blank")
-		
+atributos.add_argument('ativado',type=bool)	
 
 class User(Resource):
 
@@ -39,6 +39,7 @@ class UserRegister(Resource):
 			return {'message': f"The login {dados['login']} already exists"}
 		
 		user = UserModel(**dados)
+		user.ativado = False
 		user.save_user()
 		return {'message': 'User created successfully!'}, 201
 
@@ -50,8 +51,11 @@ class UserLogin(Resource):
 
 		user = UserModel.find_by_login(dados['login'])
 		if user and safe_str_cmp(user.senha, dados['senha']):
-			token_de_acesso = create_access_token(identity=user.user_id)
-			return {'access_token':token_de_acesso}, 200
+			if user.ativador:
+				token_de_acesso = create_access_token(identity=user.user_id)
+				return {'access_token':token_de_acesso}, 200
+			else:
+				return{'message':'User not confirmed.'}, 400
 		return {'message':'The username or password is incorrect.'}, 401
 
 	
@@ -63,3 +67,15 @@ class UserLogout(Resource):
 		jwt_id = get_jwt()['jti'] #JWT Token Identifier
 		BLOCKLIST.add(jwt_id)
 		return {'message':'Logged out successfully!'}, 200
+
+
+class UserConfirm(Resource):
+	#raiz_do_site/confirmacao/{user_id}
+	@classmethod
+	def get(cls, user_id):
+		user = UserModel.find_user(user_id)
+		if not user:
+			return {'message': "User id '{user_id}' not found."}, 404
+		user.ativado = True
+		user.save_user()
+		return {'message': "User id '{user_id}' confirmed successfully."}, 200
