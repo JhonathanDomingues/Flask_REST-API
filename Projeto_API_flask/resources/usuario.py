@@ -8,7 +8,8 @@ from blocklist import BLOCKLIST
 atributos = reqparse.RequestParser()
 atributos.add_argument('login', type=str, required=True, help="The field 'nome' cannot be left blank")
 atributos.add_argument('senha', type=str, required=True, help="The field 'nome' cannot be left blank")
-atributos.add_argument('ativado',type=bool)	
+atributos.add_argument('email', type=str)
+atributos.add_argument('ativado',type=bool)
 
 class User(Resource):
 
@@ -34,6 +35,11 @@ class UserRegister(Resource):
 	def post(self):
 		
 		dados = atributos.parse_args()
+		if not dados.get('email') or dados.get('email' is None):
+			return {'message': 'The field email cannot be left blank.'}, 400
+
+		if UserModel.find_by_email(dados['email']):
+			return {'message': f"The email '{dados['email']}' already exists."}, 400
 
 		if UserModel.find_by_login(dados['login']):
 			return {'message': f"The login {dados['login']} already exists"}

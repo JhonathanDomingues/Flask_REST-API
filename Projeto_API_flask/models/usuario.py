@@ -1,5 +1,11 @@
 from sql_alchemy import banco
 from flask import request, url_for
+from requests import post
+
+MAILGUN_DOMAIN = 'sandbox52e73951098b4eebaf0a7a222aecb784.mailgun.org'
+MAILGUN_API_KEY = '44832b9aad4bd85d5eac592b1b622cff-ef80054a-529d16c0'
+FROM_TITLE = 'No-replay - Confirm e-mail'
+FROM_EMAIL = 'no-replay@restapi.com'
 
 
 class UserModel(banco.Model):
@@ -39,8 +45,8 @@ class UserModel(banco.Model):
 					'text': f'Confirme seu cadastro clicando no link a seguir: {link}',
 					'html': f'<html><p>\
 						Confirme seu cadastro clicando no link a seguir: <a href="{link}">\
-						CONFIRMAR EMAIL</a></p></html>'
-					}
+						CONFIRMAR EMAIL</a></p></html>'}
+					)
 
 	
 	@classmethod
@@ -57,6 +63,12 @@ class UserModel(banco.Model):
 			return user
 		return None
 	
+	@classmethod
+	def find_by_email(cls, email):
+		user = cls.query.filter_by(email=email).first()
+		if user:
+			return user
+		return None
 
 	
 	def save_user(self):
