@@ -1,9 +1,9 @@
+import traceback
 from flask_restful import Resource, reqparse
 from models.usuario import UserModel
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from werkzeug.security import safe_str_cmp
 from blocklist import BLOCKLIST
-
 
 atributos = reqparse.RequestParser()
 atributos.add_argument('login', type=str, required=True, help="The field 'nome' cannot be left blank")
@@ -46,7 +46,13 @@ class UserRegister(Resource):
 		
 		user = UserModel(**dados)
 		user.ativado = False
-		user.save_user()
+		try:
+			user.save_user()
+			user.send_confirmation_email()
+		except:
+			user.delete_user()
+			traceback.print_exc()
+			return {'message': 'An internal server error has ocurred.'},500
 		return {'message': 'User created successfully!'}, 201
 
 class UserLogin(Resource):
